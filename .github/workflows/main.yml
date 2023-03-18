@@ -1,7 +1,9 @@
+name: 🚀 Deploy a GH Pages
 on:
   push:
     branches: main
-name: 🚀 Deploy a GH Pages
+permissions:
+  contents: write
 jobs:
   deploy:
     name: Build y deploy
