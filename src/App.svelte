@@ -1,65 +1,33 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { buscarCotizaciones } from "./api/divisas";
-  import type { Cotizaciones } from "./api/divisas";
-
-  let cotizaciones: Cotizaciones;
-  let valorIngresado: number;
-
-  onMount(async () => {
-    cotizaciones = await buscarCotizaciones();
-  });
-
-  function yenesAPesosTarjeta(yenes: number) {
-    if (!cotizaciones) return null;
-    const yenesEnDolares = yenes / cotizaciones.dolarAYen;
-
-    return yenesEnDolares * cotizaciones.dolarTarjeta;
-  }
-
-  function yenesAPesosQatar(yenes: number) {
-    if (!cotizaciones) return null;
-    const yenesEnDolares = yenes / cotizaciones.dolarAYen;
-
-    return yenesEnDolares * cotizaciones.dolarQatar;
-  }
-
-  function yenesAUSD(yenes: number) {
-    if (!cotizaciones) return null;
-
-    return yenes / cotizaciones.dolarAYen;
-  }
-
-  $: valorConvertido = yenesAPesosTarjeta(valorIngresado)?.toFixed(2);
-  $: valorConvertidoQatar = yenesAPesosQatar(valorIngresado)?.toFixed(2);
-  $: valorConvertidoUSD = yenesAUSD(valorIngresado)?.toFixed(2);
+  import Convertidometro from "./Convertidometro.svelte";
+  type Herramienta = "convertidometro" | "tarjetometro";
+  let herramientaSeleccionada: Herramienta = "convertidometro";
 </script>
 
 <main class="container">
-  <h1>Convertidometro</h1>
-
-  {#if !cotizaciones}
-    <button aria-busy="true">carganding</button>
+  <aside>
+    <nav>
+      <ul>
+        <li>
+          <button
+            class="outline"
+            on:click={() => (herramientaSeleccionada = "convertidometro")}
+            >Convertidometro</button
+          >
+        </li>
+        <li>
+          <button
+            class="outline"
+            on:click={() => (herramientaSeleccionada = "tarjetometro")}
+            >Tarjetómetro</button
+          >
+        </li>
+      </ul>
+    </nav>
+  </aside>
+  {#if herramientaSeleccionada === "convertidometro"}
+    <Convertidometro />
   {:else}
-    <p>Dolar tarjeta: ${cotizaciones.dolarTarjeta.toFixed(2)}</p>
-    <p>USD = ¥{cotizaciones.dolarAYen.toFixed(2)}</p>
-  {/if}
-
-  <form>
-    <label for="yen-input"
-      >Yen
-      <input
-        bind:value={valorIngresado}
-        type="number"
-        name="yen-input"
-        placeholder="Numerito va aquí"
-        disabled={!cotizaciones}
-      />
-    </label>
-  </form>
-  {#if valorConvertido}
-    <p style={"color: gray"}>🇺🇸 ${valorConvertidoUSD}</p>
-    <p>🇦🇷 ${valorConvertido}</p>
-    <p>🇶🇦 ${valorConvertidoQatar}</p>
+    <h1>WIP</h1>
   {/if}
 </main>
