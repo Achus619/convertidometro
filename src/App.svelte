@@ -1,5 +1,7 @@
 <script lang="ts">
   import Convertidometro from "./Convertidometro.svelte";
+  import Tarjetometro from "./Tarjetometro.svelte";
+
   type Herramienta = "convertidometro" | "tarjetometro";
   let herramientaSeleccionada: Herramienta = "convertidometro";
 </script>
@@ -28,6 +30,6 @@
   {#if herramientaSeleccionada === "convertidometro"}
     <Convertidometro />
   {:else}
-    <h1>WIP</h1>
+    <Tarjetometro />
   {/if}
 </main>
