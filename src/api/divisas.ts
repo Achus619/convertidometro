@@ -20,6 +20,7 @@ export async function cotizacionYenEnDolar(): Promise<number> {
 export type Cotizaciones = {
   dolarAYen: number;
   dolarTarjeta: number;
+  dolarQatar: number;
 };
 export async function buscarCotizaciones(): Promise<Cotizaciones> {
   const [dolarAYen, dolarOficial] = await Promise.all([
@@ -30,7 +31,13 @@ export async function buscarCotizaciones(): Promise<Cotizaciones> {
   return {
     dolarAYen,
     dolarTarjeta: dolarOficialATarjeta(dolarOficial),
+    dolarQatar: dolarOficialAQatar(dolarOficial),
   };
 }
 
-const dolarOficialATarjeta = (oficial: number) => oficial * 1.75;
+const MULTIPLICADOR_TARJETA = 1.75;
+const MULTIPLICADOR_QATAR = 2;
+
+const dolarOficialATarjeta = (oficial: number) =>
+  oficial * MULTIPLICADOR_TARJETA;
+const dolarOficialAQatar = (oficial: number) => oficial * MULTIPLICADOR_QATAR;

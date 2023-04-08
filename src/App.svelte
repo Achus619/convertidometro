@@ -10,14 +10,29 @@
     cotizaciones = await buscarCotizaciones();
   });
 
-  function yenesAPesos(yenes: number) {
-    if (!cotizaciones) return 0;
+  function yenesAPesosTarjeta(yenes: number) {
+    if (!cotizaciones) return null;
     const yenesEnDolares = yenes / cotizaciones.dolarAYen;
 
     return yenesEnDolares * cotizaciones.dolarTarjeta;
   }
 
-  $: valorConvertido = yenesAPesos(valorIngresado);
+  function yenesAPesosQatar(yenes: number) {
+    if (!cotizaciones) return null;
+    const yenesEnDolares = yenes / cotizaciones.dolarAYen;
+
+    return yenesEnDolares * cotizaciones.dolarQatar;
+  }
+
+  function yenesAUSD(yenes: number) {
+    if (!cotizaciones) return null;
+
+    return yenes / cotizaciones.dolarAYen;
+  }
+
+  $: valorConvertido = yenesAPesosTarjeta(valorIngresado)?.toFixed(2);
+  $: valorConvertidoQatar = yenesAPesosQatar(valorIngresado)?.toFixed(2);
+  $: valorConvertidoUSD = yenesAUSD(valorIngresado)?.toFixed(2);
 </script>
 
 <main class="container">
@@ -26,8 +41,8 @@
   {#if !cotizaciones}
     <button aria-busy="true">carganding</button>
   {:else}
-    <p>Dolar tarjeta: ${cotizaciones.dolarTarjeta}</p>
-    <p>USD = ¥{cotizaciones.dolarAYen}</p>
+    <p>Dolar tarjeta: ${cotizaciones.dolarTarjeta.toFixed(2)}</p>
+    <p>USD = ¥{cotizaciones.dolarAYen.toFixed(2)}</p>
   {/if}
 
   <form>
@@ -42,6 +57,9 @@
       />
     </label>
   </form>
-
-  <p>{valorConvertido}</p>
+  {#if valorConvertido}
+    <p style={"color: gray"}>🇺🇸 ${valorConvertidoUSD}</p>
+    <p>🇦🇷 ${valorConvertido}</p>
+    <p>🇶🇦 ${valorConvertidoQatar}</p>
+  {/if}
 </main>
