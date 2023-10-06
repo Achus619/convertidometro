@@ -36,7 +36,7 @@ export async function buscarCotizaciones(): Promise<Cotizaciones> {
 }
 
 const MULTIPLICADOR_TARJETA = 1.75;
-const MULTIPLICADOR_QATAR = 2;
+const MULTIPLICADOR_QATAR = 1.8;
 
 const dolarOficialATarjeta = (oficial: number) =>
   oficial * MULTIPLICADOR_TARJETA;
