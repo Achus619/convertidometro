@@ -17,13 +17,6 @@
     return yenesEnDolares * cotizaciones.dolarTarjeta;
   }
 
-  function yenesAPesosQatar(yenes: number) {
-    if (!cotizaciones) return null;
-    const yenesEnDolares = yenes / cotizaciones.dolarAYen;
-
-    return yenesEnDolares * cotizaciones.dolarQatar;
-  }
-
   function yenesAUSD(yenes: number) {
     if (!cotizaciones) return null;
 
@@ -31,7 +24,6 @@
   }
 
   $: valorConvertido = yenesAPesosTarjeta(valorIngresado)?.toFixed(2);
-  $: valorConvertidoQatar = yenesAPesosQatar(valorIngresado)?.toFixed(2);
   $: valorConvertidoUSD = yenesAUSD(valorIngresado)?.toFixed(2);
 </script>
 
@@ -55,7 +47,6 @@
   </label>
 </form>
 {#if valorConvertido}
-  <p style={"color: gray"}>🇺🇸 ${valorConvertidoUSD}</p>
   <p>🇦🇷 ${valorConvertido}</p>
-  <p>🇶🇦 ${valorConvertidoQatar}</p>
+  <p style={"color: gray"}>🇺🇸 ${valorConvertidoUSD}</p>
 {/if}
