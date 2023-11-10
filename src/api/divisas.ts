@@ -1,10 +1,11 @@
 export type Cotizaciones = {
   dolarAYen: number;
   dolarTarjeta: number;
+  dolarBlue: number;
 };
 
 export async function buscarCotizaciones(): Promise<Cotizaciones> {
-  const [dolarAYen, dolarOficial] = await Promise.all([
+  const [dolarAYen, { dolarOficial, dolarBlue }] = await Promise.all([
     cotizacionYenEnDolar(),
     cotizacionDolar(),
   ]);
@@ -12,22 +13,34 @@ export async function buscarCotizaciones(): Promise<Cotizaciones> {
   return {
     dolarAYen,
     dolarTarjeta: dolarOficialATarjeta(dolarOficial),
+    dolarBlue,
   };
 }
 
-async function cotizacionDolar(): Promise<number> {
-  const valorEnLS = localStorage.getItem("convertidometro_usd");
+async function cotizacionDolar(): Promise<{
+  dolarOficial: number;
+  dolarBlue: number;
+}> {
+  const valorOficialEnLS = localStorage.getItem("convertidometro_usd");
+  const valorBlueEnLS = localStorage.getItem("convertidometro_usd-blue");
 
-  if (valorEnLS) {
+  if (valorOficialEnLS && valorBlueEnLS) {
     buscarCotizacionUSDGuardarLS();
-    return Number(valorEnLS);
+    return {
+      dolarOficial: Number(valorOficialEnLS),
+      dolarBlue: Number(valorBlueEnLS),
+    };
   }
 
-  return buscarCotizacionUSDGuardarLS();
+  const { cotizacionOficial, cotizacionBlue } =
+    await buscarCotizacionUSDGuardarLS();
+
+  return { dolarOficial: cotizacionOficial, dolarBlue: cotizacionBlue };
 }
 
 async function buscarCotizacionUSDGuardarLS() {
   const NOMBRE_DOLAR_OFICIAL = "Oficial";
+  const NOMBRE_DOLAR_BLUE = "Blue";
   const URL = "https://www.dolarsi.com/api/api.php?type=dolar";
 
   try {
@@ -35,10 +48,20 @@ async function buscarCotizacionUSDGuardarLS() {
     const dolarOficial = response.find(
       (coso) => coso.casa.nombre === NOMBRE_DOLAR_OFICIAL
     );
-    const cotizacion = parseFloat(dolarOficial?.casa?.venta?.replace(",", "."));
-    localStorage.setItem("convertidometro_usd", String(cotizacion));
+    const dolarBlue = response.find(
+      (coso) => coso.casa.nombre === NOMBRE_DOLAR_BLUE
+    );
+    const cotizacionOficial = parseFloat(
+      dolarOficial?.casa?.venta?.replace(",", ".")
+    );
+    localStorage.setItem("convertidometro_usd", String(cotizacionOficial));
 
-    return cotizacion;
+    const cotizacionBlue = parseFloat(
+      dolarBlue?.casa?.venta?.replace(",", ".")
+    );
+    localStorage.setItem("convertidometro_usd-blue", String(cotizacionBlue));
+
+    return { cotizacionOficial, cotizacionBlue };
   } catch (error) {
     console.error("Fallo al buscar cotizacion usd");
   }
