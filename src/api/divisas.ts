@@ -57,7 +57,7 @@ async function buscarCotizacionUSDGuardarLS() {
     localStorage.setItem("convertidometro_usd", String(cotizacionOficial));
 
     const cotizacionBlue = parseFloat(
-      dolarBlue?.casa?.venta?.replace(",", ".")
+      dolarBlue?.casa?.venta?.replace(".", "").replace(",", ".")
     );
     localStorage.setItem("convertidometro_usd-blue", String(cotizacionBlue));
 
